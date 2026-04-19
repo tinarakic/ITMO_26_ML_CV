@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AI-ntidote | Спасение от новой реальности</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', 'Roboto', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            transition: background 0.3s ease, backdrop-filter 0.3s ease;
+        }
+
+        /*ТЕМЫ
+        ДЕНЬ*/
+        body.theme-day {
+            background: linear-gradient(135deg, #ffd6b0 0%, #ffb77c 100%);
+        }
+        body.theme-day .glass-card {
+            background: rgba(255, 235, 215, 0.92);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 180, 120, 0.7);
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2);
+        }
+        body.theme-day .btn-analyze {
+            background: linear-gradient(105deg, #e07a5f, #e09d7a);
+            box-shadow: 0 5px 12px rgba(224, 122, 95, 0.3);
+        }
+        body.theme-day .btn-analyze:hover:not(:disabled) {
+            background: linear-gradient(105deg, #d06b4e, #cc8b66);
+        }
+        body.theme-day .badge {
+            background: #ffddbb;
+            color: #b45f2b;
+        }
+        body.theme-day .result-card {
+            background: rgba(255, 245, 235, 0.9);
+            border-color: #ffaa77;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        body.theme-day .result-label {
+            color: #c96f2e;
+        }
+        body.theme-day .verdict-ai {
+            background: #ffded5;
+            color: #c0392b;
+        }
+        body.theme-day .verdict-real {
+            background: #d9f0e0;
+            color: #2e7d64;
+        }
+        /* иконки*/
+        body.theme-day .icon-svg,
+        body.theme-day .upload-icon-custom,
+        body.theme-day .preview-placeholder-icon,
+        body.theme-day .icon-flaticon-placeholder,
+        body.theme-day .verdict-icon {
+            filter: brightness(0.3) sepia(1) hue-rotate(350deg) saturate(1.5);
+        }
+
+        /* НОЧЬ*/
+        body.theme-night {
+            background: linear-gradient(135deg, #0a2f3a 0%, #0b3b4f 30%, #115e6b 100%);
+        }
+        body.theme-night .glass-card {
+            background: rgba(10, 30, 45, 0.92);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(64, 180, 200, 0.5);
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
+            color: #e0f0ff;
+        }
+        body.theme-night h1 {
+            background: linear-gradient(135deg, #b3e4ff, #7bc5e0);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        body.theme-night .ai-highlight {
+            color: #2dd4bf;
+            text-shadow: 0 0 3px #2dd4bf;
+        }
+        body.theme-night .sub {
+            color: #b9e6ff;
+            border-left-color: #2dd4bf;
+        }
+        body.theme-night .upload-zone {
+            background: rgba(15, 45, 65, 0.7);
+            border-color: #2c7f8c;
+        }
+        body.theme-night .upload-zone:hover {
+            background: rgba(25, 65, 90, 0.8);
+            border-color: #5bc0d9;
+        }
+        body.theme-night .btn-analyze {
+            background: linear-gradient(105deg, #1a5f6e, #0e4a5a);
+            box-shadow: 0 5px 12px rgba(0, 160, 180, 0.3);
+        }
+        body.theme-night .result-card {
+            background: rgba(8, 28, 40, 0.88);
+            border-color: #2aa0b0;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+        }
+        body.theme-night .result-label {
+            color: #5bc0d9;
+        }
+        body.theme-night .verdict-ai {
+            background: #3a2a5e;
+            color: #ffb3e6;
+        }
+        body.theme-night .verdict-real {
+            background: #1e6b5e;
+            color: #c0ffe0;
+        }
+        body.theme-night .badge {
+            background: #1c5f6e;
+            color: #d4f1ff;
+        }
+        /* иконки ночи*/
+        body.theme-night .icon-svg,
+        body.theme-night .upload-icon-custom,
+        body.theme-night .preview-placeholder-icon,
+        body.theme-night .icon-flaticon-placeholder,
+        body.theme-night .verdict-icon {
+            filter: brightness(0) invert(1) sepia(1) hue-rotate(160deg) saturate(2);
+        }
+
+        /* МРАК*/
+        body.theme-darkness {
+            background: linear-gradient(135deg, #0b0b1a, #1a0f2e, #2a1040);
+        }
+        body.theme-darkness .glass-card {
+            background: rgba(10, 5, 20, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid #8b5cf6;
+            box-shadow: 0 0 18px rgba(139, 92, 246, 0.3);
+            color: #e9d5ff;
+        }
+        body.theme-darkness h1 {
+            background: linear-gradient(135deg, #d9a7ff, #c084fc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        body.theme-darkness .ai-highlight {
+            color: #ff66c0;
+            text-shadow: 0 0 8px #ff44cc, 0 0 3px #ff99dd;
+        }
+        body.theme-darkness .sub {
+            color: #c4b5fd;
+            border-left-color: #a855f7;
+        }
+        body.theme-darkness .upload-zone {
+            background: rgba(30, 15, 45, 0.7);
+            border-color: #7e4ac2;
+        }
+        body.theme-darkness .upload-zone:hover {
+            background: rgba(50, 25, 70, 0.8);
+            border-color: #b77cff;
+        }
+        body.theme-darkness .btn-analyze {
+            background: linear-gradient(105deg, #5b21b6, #8b5cf6);
+            box-shadow: 0 0 12px #8b5cf6aa;
+        }
+        body.theme-darkness .btn-analyze:hover:not(:disabled) {
+            background: linear-gradient(105deg, #6d28d9, #a78bfa);
+        }
+        body.theme-darkness .result-card {
+            background: rgba(20, 8, 35, 0.88);
+            border-color: #9b6dff;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+        }
+        body.theme-darkness .result-label {
+            color: #c084fc;
+        }
+        body.theme-darkness .verdict-ai {
+            background: #7e1e4a;
+            color: #ffb3d9;
+        }
+        body.theme-darkness .verdict-real {
+            background: #2d6a4f;
+            color: #bbffd9;
+        }
+        body.theme-darkness .badge {
+            background: #4c1d95;
+            color: #e9d5ff;
+        }
+        body.theme-darkness footer {
+            color: #a78bfa;
+        }
+        /* иконки мрака*/
+        body.theme-darkness .icon-svg,
+        body.theme-darkness .upload-icon-custom,
+        body.theme-darkness .preview-placeholder-icon,
+        body.theme-darkness .icon-flaticon-placeholder,
+        body.theme-darkness .verdict-icon {
+            filter: brightness(0) invert(1) sepia(1) hue-rotate(260deg) saturate(5) drop-shadow(0 0 2px #ff99ff);
+        }
+
+        /* общий стиль карточки */
+        .glass-card {
+            max-width: 720px;
+            width: 100%;
+            border-radius: 2.8rem;
+            padding: 2rem 2rem 2.2rem;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        /* шапка с кнопками тем */
+        .header-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 0.25rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        /* выделение первой буквы I в слове AI - другой цвет + свечение для мрака */
+        .ai-highlight {
+            color: #f97316;
+            background: none;
+            display: inline-block;
+        }
+        body.theme-night .ai-highlight {
+            color: #2dd4bf;
+            text-shadow: 0 0 3px #2dd4bf;
+        }
+        body.theme-darkness .ai-highlight {
+            color: #ff66c0;
+            text-shadow: 0 0 8px #ff44cc, 0 0 3px #ff99dd;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.8rem;
+            border-radius: 40px;
+            margin-left: 12px;
+            vertical-align: middle;
+        }
+
+        .theme-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .theme-btn {
+            background: rgba(128,128,128,0.2);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+            color: inherit;
+        }
+        .theme-btn:hover {
+            transform: scale(0.96);
+            background: rgba(0,0,0,0.2);
+        }
+
+        .sub {
+            margin-top: 0.5rem;
+            margin-bottom: 1.8rem;
+            font-size: 0.95rem;
+            padding-left: 0.9rem;
+            font-weight: 500;
+        }
+
+
+        .upload-zone {
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s;
+            margin-bottom: 1.6rem;
+        }
+
+        .upload-zone:hover {
+            transform: scale(0.98);
+        }
+
+        .upload-icon-svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .upload-text {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .preview-area {
+            border-radius: 1.8rem;
+            margin: 1rem 0 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            min-height: 240px;
+            background: rgba(0,0,0,0.03);
+            transition: 0.2s;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 1.5rem;
+            box-shadow: 0 12px 24px -8px rgba(0,0,0,0.3);
+            object-fit: contain;
+        }
+
+        .placeholder-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.8;
+        }
+
+        .btn-analyze {
+            width: 100%;
+            border: none;
+            padding: 0.9rem;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: white;
+            border-radius: 3rem;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-analyze:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* РЕЗУЛЬТАТ */
+        .result-card {
+            margin-top: 2rem;
+            backdrop-filter: blur(6px);
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.5rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .result-label {
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+
+        .result-verdict {
+            font-size: 1.7rem;
+            font-weight: 800;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .verdict-ai, .verdict-real {
+            padding: 0.3rem 1.3rem;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .confidence {
+            font-size: 0.85rem;
+            margin-top: 12px;
+            border-top: 1px dashed rgba(128,128,128,0.3);
+            padding-top: 12px;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-msg {
+            color: #ff7777;
+            background: rgba(255,0,0,0.1);
+            padding: 12px;
+            border-radius: 1.2rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 2rem;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 550px) {
+            .glass-card { padding: 1.5rem; }
+            .result-verdict { font-size: 1.3rem; }
+            .theme-btn { padding: 4px 10px; font-size: 0.7rem; }
+        }
+
+        /* SVG-иконки */
+        .upload-icon-custom {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>') no-repeat center;
+            background-size: contain;
+            width: 48px;
+            height: 48px;
+        }
+        .preview-placeholder-icon {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>') no-repeat center;
+            background-size: contain;
+            width: 56px;
+            height: 56px;
+            opacity: 0.8;
+        }
+        .icon-flaticon-placeholder {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2-12H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2z"/></svg>') no-repeat center;
+            background-size: contain;
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+        }
+        .verdict-icon {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            vertical-align: middle;
+        }
+        .real-icon {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>') no-repeat center;
+            background-size: contain;
+        }
+        .ai-icon {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.75 6.75l.75-2.25.75 2.25 2.25.75-2.25.75-.75 2.25-.75-2.25-2.25-.75 2.25-.75z" /></svg>') no-repeat center;
+            background-size: contain;
+        }
+
+        .icon-svg {
+            filter: none;
+            transition: filter 0.2s;
+        }
+    </style>
+</head>
+<body class="theme-day">
+
+<div class="glass-card">
+    <div class="header-row">
+        <div>
+            <h1>
+                A<span class="ai-highlight">I</span><span>ntidote</span><span class="badge"> Поймай фэйк</span>
+            </h1>
+        </div>
+        <div class="theme-buttons">
+            <button class="theme-btn" data-theme="day">☀️ День</button>
+            <button class="theme-btn" data-theme="night">🌙 Ночь</button>
+            <button class="theme-btn" data-theme="darkness">🦇 Мрак</button>
+        </div>
+    </div>
+    <div class="sub">
+        Загрузи изображение 
+        <br> — наша модель определит: реальное оно или сгенерировано ИИ.
+    </div>
+
+    <div id="dropZone" class="upload-zone">
+        <div class="upload-icon-svg upload-icon-custom icon-svg"></div>
+        <div class="upload-text">Нажмите или перетащите файл</div>
+        <div class="upload-hint">Поддерживаются JPG, PNG, WEBP (до 10 МБ)</div>
+        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
+    </div>
+
+    <div class="preview-area" id="previewArea">
+        <div class="placeholder-preview">
+            <div class="preview-placeholder-icon icon-svg"></div>
+            <span>Здесь появится загруженное изображение</span>
+        </div>
+    </div>
+
+    <button id="analyzeBtn" class="btn-analyze">
+        <span class="icon-flaticon-placeholder icon-svg"></span> Фэйк? <span class="icon-flaticon-placeholder icon-svg"></span>
+    </button>
+
+    <div id="resultBlock" class="result-card" style="display: none;">
+        <div class="result-label">РЕЗУЛЬТАТ</div>
+        <div class="result-verdict" id="verdictText"></div>
+        <div class="confidence" id="confidenceInfo"></div>
+    </div>
+
+    <footer>
+        ⚡ © 2026. Проект выполнен командой 2 в рамках предмета "Машинное обучение" • Модель на Python
+    </footer>
+</div>
+
+<script>
+    // ----------------------------------------------------------------------ТЕМЫ
+    const body = document.body;
+    const themeBtns = document.querySelectorAll('.theme-btn');
+    function setTheme(theme) {
+        body.classList.remove('theme-day', 'theme-night', 'theme-darkness');
+        if (theme === 'day') body.classList.add('theme-day');
+        else if (theme === 'night') body.classList.add('theme-night');
+        else if (theme === 'darkness') body.classList.add('theme-darkness');
+        localStorage.setItem('ai_theme', theme);
+    }
+    themeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const theme = btn.getAttribute('data-theme');
+            setTheme(theme);
+        });
+    });
+    const savedTheme = localStorage.getItem('ai_theme');
+    if (savedTheme && ['day','night','darkness'].includes(savedTheme)) setTheme(savedTheme);
+    else setTheme('day');
+
+    // -------------------------------------------------------------DOM элементы
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const previewArea = document.getElementById('previewArea');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const resultBlock = document.getElementById('resultBlock');
+    const verdictTextSpan = document.getElementById('verdictText');
+    const confidenceInfoSpan = document.getElementById('confidenceInfo');
+
+    let currentImageFile = null;
+    let currentPreviewUrl = null;
+
+    const API_ENDPOINT = 'http://127.0.0.1:5000/predict';   // сменить <---------------- тут мэджик
+
+    function revokePreview() {
+        if (currentPreviewUrl) {
+            URL.revokeObjectURL(currentPreviewUrl);
+            currentPreviewUrl = null;
+        }
+    }
+
+    function showPreview(file) {
+        revokePreview();
+        if (!file) {
+            previewArea.innerHTML = `<div class="placeholder-preview"><div class="preview-placeholder-icon icon-svg"></div><span>Здесь появится загруженное изображение</span></div>`;
+            return;
+        }
+        if (!file.type.startsWith('image/')) {
+            previewArea.innerHTML = `<div class="placeholder-preview" style="color:#c2410c;"><span>⚠️ Файл не является изображением</span></div>`;
+            currentImageFile = null;
+            return;
+        }
+        const url = URL.createObjectURL(file);
+        currentPreviewUrl = url;
+        previewArea.innerHTML = `<img src="${url}" class="image-preview" alt="preview">`;
+    }
+
+    function handleFile(file) {
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+            alert('Пожалуйста, выберите изображение (JPEG, PNG, WEBP)');
+            return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+            alert('Файл слишком большой (макс. 10 МБ)');
+            return;
+        }
+        currentImageFile = file;
+        showPreview(file);
+        resultBlock.style.display = 'none';
+    }
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files?.length) handleFile(e.target.files[0]);
+    });
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#3b82f6'; dropZone.style.background = 'rgba(59,130,246,0.1)'; });
+    dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.style.borderColor = ''; dropZone.style.background = ''; });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = '';
+        dropZone.style.background = '';
+        const files = e.dataTransfer.files;
+        if (files.length) handleFile(files[0]);
+    });
+
+    async function sendToModel(imageFile) {
+        const formData = new FormData();
+        formData.append('image', imageFile);
+        const response = await fetch(API_ENDPOINT, { method: 'POST', body: formData });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        let verdict = null, confidence = null;
+        if (data.prediction) verdict = data.prediction;
+        else if (data.label) verdict = data.label;
+        else if (data.class) verdict = data.class;
+        else if (data.result) verdict = data.result;
+        if (data.confidence !== undefined) confidence = data.confidence;
+        else if (data.score !== undefined) confidence = data.score;
+        else if (data.probability !== undefined) confidence = data.probability;
+        let normalized = null;
+        if (verdict) {
+            const low = verdict.toString().toLowerCase();
+            if (low.includes('ai') || low.includes('generated') || low.includes('fake')) normalized = 'ai';
+            else if (low.includes('real') || low.includes('authentic')) normalized = 'real';
+            else normalized = verdict;
+        } else {
+            if (data.class_idx === 0) normalized = 'real';
+            else if (data.class_idx === 1) normalized = 'ai';
+            else throw new Error('Неизвестный формат ответа');
+        }
+        return { verdict: normalized, confidence, rawData: data };
+    }
+
+    function displayResult(verdict, confidence) {
+        resultBlock.style.display = 'block';
+        if (verdict === 'ai') {
+            verdictTextSpan.innerHTML = `<span class="verdict-ai"><span class="verdict-icon ai-icon icon-svg"></span> СГЕНЕРИРОВАНО ИИ</span>`;
+        } else if (verdict === 'real') {
+            verdictTextSpan.innerHTML = `<span class="verdict-real"><span class="verdict-icon real-icon icon-svg"></span> РЕАЛЬНОЕ ИЗОБРАЖЕНИЕ</span>`;
+        } else {
+            verdictTextSpan.innerHTML = `<span>🔍 ${verdict}</span>`;
+        }
+        if (confidence !== null && confidence !== undefined) {
+            let percent = (typeof confidence === 'number') ? (confidence * 100).toFixed(1) + '%' : confidence;
+            confidenceInfoSpan.innerHTML = `Уверенность модели: <strong>${percent}</strong> &nbsp;`;
+        } else {
+            confidenceInfoSpan.innerHTML = `Дополнительная информация: уверенность не указана в ответе модели.`;
+        }
+    }
+
+    analyzeBtn.addEventListener('click', async () => {
+        if (!currentImageFile) {
+            alert('Пожалуйста, сначала выберите изображение для анализа');
+            return;
+        }
+        analyzeBtn.disabled = true;
+        const originalHTML = analyzeBtn.innerHTML;
+        analyzeBtn.innerHTML = `<div class="loader"></div> Анализируем...`;
+        resultBlock.style.display = 'none';
+        try {
+            const { verdict, confidence } = await sendToModel(currentImageFile);
+            displayResult(verdict, confidence);
+        } catch (err) {
+            resultBlock.style.display = 'block';
+            verdictTextSpan.innerHTML = `<span style="color:#ff8888;">⚠️ Ошибка при обращении к модели</span>`;
+            confidenceInfoSpan.innerHTML = `Не удалось получить ответ от сервера.`;
+        } finally {
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = originalHTML;
+        }
+    });
+    console.log(`[Frontend Ready] Будет отправлять POST запрос на ${API_ENDPOINT} с FormData { image: (файл) }`);
+</script>
+</body>
+</html>
