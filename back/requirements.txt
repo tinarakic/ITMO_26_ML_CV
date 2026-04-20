@@ -2,6 +2,6 @@ fastapi
 uvicorn[standard]
 python-multipart
 numpy
-onnxruntime
+onnxruntime-gpu
 opencv-python-headless
 pillow
