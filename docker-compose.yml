@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./back
+    container_name: ai_detector_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - /root/ai-detector/models:/app/models:ro
+
+  frontend:
+    build:
+      context: ./front
+    container_name: ai_detector_frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"

@@ -568,7 +568,7 @@
     let currentImageFile = null;
     let currentPreviewUrl = null;
 
-    const API_ENDPOINT = 'http://127.0.0.1:5000/predict';   // сменить <---------------- тут мэджик
+    const API_ENDPOINT = '/api/predict';   // сменить <---------------- тут мэджик
 
     function revokePreview() {
         if (currentPreviewUrl) {
@@ -624,7 +624,7 @@
 
     async function sendToModel(imageFile) {
         const formData = new FormData();
-        formData.append('image', imageFile);
+        formData.append('file', imageFile);
         const response = await fetch(API_ENDPOINT, { method: 'POST', body: formData });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
